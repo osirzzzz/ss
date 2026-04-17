@@ -372,9 +372,10 @@ create() {
             is_dynamic_port_link_file=$is_json_file-link.json
             cat <<<$is_new_dynamic_port_json >$is_dynamic_port_link_file
         }
-        if [[ $is_new_install ]]; then
+        if [[ $is_new_install || ! -f $is_config_json ]]; then
             # config.json
             create config.json
+            is_api_fail=1
         else
             # use api add config
             api add $is_json_file $is_dynamic_port_link_file &>/dev/null
@@ -1828,7 +1829,7 @@ main() {
             ;;
         esac
         is_dont_auto_exit=
-        manage restart &
+        [[ $is_api_fail ]] && manage restart &
         [[ $is_del_host ]] && manage restart caddy &
         ;;
     dns)
