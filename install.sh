@@ -189,8 +189,11 @@ download() {
 }
 
 get_ip() {
-    export "$(_wget -4 -qO- https://one.one.one.one/cdn-cgi/trace | grep ip=)" &>/dev/null
-    [[ -z $ip ]] && export "$(_wget -6 -qO- https://one.one.one.one/cdn-cgi/trace | grep ip=)" &>/dev/null
+    ip=$(_wget -4 -qO- https://api.ipify.org 2>/dev/null | tr -d '\r\n')
+    [[ -z $ip ]] && ip=$(_wget -4 -qO- https://ipv4.icanhazip.com 2>/dev/null | tr -d '\r\n')
+    [[ -z $ip ]] && ip=$(_wget -4 -qO- https://ifconfig.me/ip 2>/dev/null | tr -d '\r\n')
+    [[ -z $ip ]] && ip=$(_wget -4 -qO- https://ipinfo.io/ip 2>/dev/null | tr -d '\r\n')
+    [[ -z $ip ]] && ip=$(_wget -6 -qO- https://api64.ipify.org 2>/dev/null | tr -d '\r\n')
 }
 
 check_status() {
@@ -330,10 +333,14 @@ main() {
         done
     fi
 
-    [[ ! $ip ]] && {
-        msg err "获取服务器 IP 失败."
-        exit_and_del_tmpdir
-    }
+    if [[ ! $ip ]]; then
+        msg warn "自动获取服务器 IP 失败，改为手动输入"
+        read -rp "请输入服务器公网 IP: " ip
+        [[ -z $ip ]] && {
+            msg err "未输入服务器 IP."
+            exit_and_del_tmpdir
+        }
+    fi
 
     mkdir -p "$is_sh_dir"
     if [[ $local_install ]]; then
