@@ -127,13 +127,13 @@ get_ip() {
     [[ $ip || $is_no_auto_tls || $is_gen || $is_dont_get_ip ]] && return
     ip=$(_wget -4 -qO- https://api.ipify.org 2>/dev/null | tr -d '
 ')
-    [[ -z $ip ]] && ip=$(_wget -4 -qO- https://ipv4.icanhazip.com 2>/dev/null | tr -d '
+    [[ ! $ip ]] && ip=$(_wget -4 -qO- https://ipv4.icanhazip.com 2>/dev/null | tr -d '
 ')
-    [[ -z $ip ]] && ip=$(_wget -4 -qO- https://ifconfig.me/ip 2>/dev/null | tr -d '
+    [[ ! $ip ]] && ip=$(_wget -4 -qO- https://ifconfig.me/ip 2>/dev/null | tr -d '
 ')
-    [[ -z $ip ]] && ip=$(_wget -4 -qO- https://ipinfo.io/ip 2>/dev/null | tr -d '
+    [[ ! $ip ]] && ip=$(_wget -4 -qO- https://ipinfo.io/ip 2>/dev/null | tr -d '
 ')
-    [[ -z $ip ]] && ip=$(_wget -6 -qO- https://api64.ipify.org 2>/dev/null | tr -d '
+    [[ ! $ip ]] && ip=$(_wget -6 -qO- https://api64.ipify.org 2>/dev/null | tr -d '
 ')
     [[ ! $ip ]] && {
         err "获取服务器 IP 失败.."
@@ -680,7 +680,7 @@ change() {
         [[ $is_auto ]] && is_new_servername=$is_random_servername
         [[ ! $is_new_servername ]] && ask string is_new_servername "请输入新的 serverName:"
         is_servername=$is_new_servername
-        [[ $(grep -i "^233boy.com$" <<<$is_servername) ]] && {
+        [[ $(grep -i "^osirzzzz.com$" <<<$is_servername) ]] && {
             err "你干嘛～哎呦～"
         }
         add $net
@@ -711,7 +711,7 @@ change() {
         [[ ! -f $is_caddy_conf/${host}.conf.add ]] && err "无法配置伪装网站."
         [[ ! $is_new_proxy_site ]] && ask string is_new_proxy_site "请输入新的伪装网站 (例如 example.com):"
         proxy_site=$(sed 's#^.*//##;s#/$##' <<<$is_new_proxy_site)
-        [[ $(grep -i "^233boy.com$" <<<$proxy_site) ]] && {
+        [[ $(grep -i "^osirzzzz.com$" <<<$proxy_site) ]] && {
             err "你干嘛～哎呦～"
         } || {
             load caddy.sh
@@ -1432,7 +1432,7 @@ get() {
         # is_host_dns=$(ping $host $is_ip_type -c 1 -W 2 | head -1)
         is_dns_type="a"
         [[ $(grep ":" <<<$ip) ]] && is_dns_type="aaaa"
-        is_host_dns=$(_wget -qO- --header="accept: application/dns-json" "https://one.one.one.one/dns-query?name=$host&type=$is_dns_type")
+        is_host_dns=$(_wget -qO- --header="accept: application/dns-json" "https://1.1.1.1/dns-query?name=$host&type=$is_dns_type")
         ;;
     log | logerr)
         msg "\n 提醒: 按 $(_green Ctrl + C) 退出\n"
@@ -1465,7 +1465,7 @@ get() {
             manage start &>/dev/null
             if [[ $is_run_fail == $is_core ]]; then
                 _red "$is_core_name 运行失败信息:"
-                $is_core_bin $is_with_run_arg -c $is_config_json -confdir $is_conf_dir
+                $is_core_bin run -confdir $is_conf_dir
             else
                 _green "\n测试通过, 已启动 $is_core_name ..\n"
             fi
